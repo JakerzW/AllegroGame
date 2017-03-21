@@ -12,7 +12,8 @@ int main()
 		while (!key[KEY_ESC])
 		{
 			/*  put your code here  */
-			putpixel(screen, SCREEN_W / 2, SCREEN_H / 2, makecol(0, 255, 0));
+			putpixel(screen, mouse_x, mouse_y, makecol(0, 255, 0));
+			clear_to_color(screen, makecol(0, 0, 0));
 		}
 
 	}
@@ -67,6 +68,8 @@ END_OF_MAIN()     /* line must be included at the end of the nor
 		retvalue = 0;
 	}
 	/* add other initializations here */
+	int install_mouse();
+
 	return retvalue;
 }
 
