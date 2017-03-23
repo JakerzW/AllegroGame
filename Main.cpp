@@ -3,22 +3,37 @@
 /* prototypes */
 int init();
 void deinit();
-int loadBackground();
+//int drawBackground();
+int destroyBitmaps();
+
+BITMAP *background = nullptr; 
+BITMAP *archer = nullptr;
+BITMAP *arrow = nullptr;
+BITMAP *buffer = nullptr;
 
 int main()
 {  /* start of main */
 	int retval = 0;
-
 	if (init() == 0)
 	{
+		background = load_bitmap("sprites\\background.bmp", 0);
+		archer = load_bitmap("sprites\\archer.bmp", 0);
+		set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
+		buffer = create_bitmap(SCREEN_W, SCREEN_H);
+		clear_bitmap(buffer);
 		while (!key[KEY_ESC])
 		{
 			/*  main code  */
-			//putpixel(screen, mouse_x, mouse_y, makecol(0, 255, 0));
-			set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
+			for (size_t i = 0; i < 5; i++)
+			{
+				stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+				masked_blit(archer, buffer, i * 58, 0, 100, 540, 58, 80);
+				blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+				rest(80);
+			}
+			rest(2000);
 			show_mouse(screen);
 		}
-
 	}
 	else
 	{
@@ -35,7 +50,6 @@ END_OF_MAIN()     /* line must be included at the end of the nor
 int init()
 {
 	int depth = 0;
-
 	int retvalue = 0;
 	if (allegro_init() != 0)
 	{
@@ -68,8 +82,7 @@ int init()
 		retvalue = 0;
 	}
 	/* add other initializations here */
-
-	loadBackground();
+	destroyBitmaps();
 	return retvalue;
 }
 
@@ -80,9 +93,8 @@ void deinit()
 	/* add other deinitializations here */
 }
 
-int loadBackground()
+/*int drawBackground()
 {
-	BITMAP *background = nullptr;
 	background = load_bitmap("sprites\\background.bmp", 0);
 	if (!background)
 	{
@@ -90,5 +102,13 @@ int loadBackground()
 		return -1;
 		destroy_bitmap(background);
 	}
-	stretch_blit(background, screen, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+}*/
+
+int destroyBitmaps()
+{
+	destroy_bitmap(background);
+	destroy_bitmap(archer);
+	destroy_bitmap(arrow);
+
+	return 0;
 }
