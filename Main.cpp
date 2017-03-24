@@ -11,7 +11,7 @@ BITMAP *archer = nullptr;
 BITMAP *arrow = nullptr;
 BITMAP *buffer = nullptr;
 
-bool arrowOnScreen = false;
+
 
 int main()
 {  /* start of main */
@@ -24,45 +24,35 @@ int main()
 		set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
 		buffer = create_bitmap(SCREEN_W, SCREEN_H);
 		clear_bitmap(buffer);
+		bool archerReady = false;
+		bool arrowOnScreen = false;
 		while (!key[KEY_ESC])
 		{
 			/*  main code  */
-			for (size_t i = 0; i < 6; i++)
+			
+			if (!archerReady)
 			{
-				stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-				masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
-				masked_blit(arrow, buffer, 4 * 36, 0, (i+1)* 100, 540, 36, 39);
-				blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-				rest(100);
+				for (size_t i = 0; i < 6; i++)
+				{
+					stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+					masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
+					//masked_blit(arrow, buffer, 4 * 36, 0, (i + 1) * 100, 540, 36, 39);
+					blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+					rest(100);
+				}
+				archerReady = true;
 			}
-			rest(1000);
-			/*if (mouse_b & 1)
+			if (key[KEY_SPACE])
 			{
 				arrowOnScreen = true;
+				int arrowDist = 100;
 				while (arrowOnScreen)
 				{
-					int distOfArrow = 0;
-					for (size_t i = 6; i < 8; i++)
-					{
-						distOfArrow += 100;
-						stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-						masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
-						masked_blit(arrow, buffer, 5 * 36, 0, distOfArrow, 530, 36, 39);
-					}
-					while (arrowOnScreen)
-					{
-						//add return to archer state
-						stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-						masked_blit(archer, buffer, 58, 0, 100, 530, 58, 80);
-						masked_blit(arrow, buffer, 5 * 36, 0, distOfArrow, 530, 36, 39);
-						distOfArrow += 100;
-						if (distOfArrow > 1500)
-							arrowOnScreen = false;
-					} 
+					masked_blit(arrow, buffer, 4 * 36, 0, arrowDist, 540, 36, 39);
+					arrowDist += 100;
 				}
-			}*/
+			}
 			show_mouse(screen);
-
 		}
 	}
 	else

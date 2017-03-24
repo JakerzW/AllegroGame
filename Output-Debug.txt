@@ -6,13 +6,13 @@
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\KernelBase.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Program Files (x86)\Norton Internet Security\NortonData\22.7.0.76\Definitions\BASHDefs\20170317.001\UMEngx86.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\alld42.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\vcruntime140d.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbased.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\user32.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\win32u.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\gdi32.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\vcruntime140d.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\gdi32full.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ole32.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbased.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\combase.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbase.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\rpcrt4.dll'. Cannot find or open the PDB file.
@@ -20,17 +20,19 @@
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\cryptbase.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\bcryptprimitives.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\sechost.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ddraw.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dinput.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcrt.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winmm.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcrt.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\advapi32.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dsound.dll'. Cannot find or open the PDB file.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\powrprof.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcr100d.dll'. Symbols loaded.
-'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dciman32.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winmmbase.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dsound.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winmmbase.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ddraw.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\winmmbase.dll'
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\cfgmgr32.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\powrprof.dll'. Cannot find or open the PDB file.
+'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dciman32.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\imm32.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\kernel.appcore.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\uxtheme.dll'. Cannot find or open the PDB file.
@@ -52,30 +54,21 @@ al-main INFO: Allegro initialised (instance 1)
 al-gfx INFO: Called set_gfx_mode(1, 1280, 720, 0, 0).
 al-gfx INFO: First call, remembering console state.
 al-gfx INFO: Autodetecting graphic driver.
+al-gfx INFO: The driver will wait for vsync.
+al-gfx INFO: set_gfx_card success for 1280x720x32.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\ki120144.inf_amd64_5e535efebbe5fe10\igdumdim32.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\setupapi.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\ki120144.inf_amd64_5e535efebbe5fe10\igc32.dll'. Cannot find or open the PDB file.
-al-gfx INFO: The driver will wait for vsync.
-al-gfx INFO: set_gfx_card success for 1280x720x32.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\hid.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\devobj.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\wintrust.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msasn1.dll'. Cannot find or open the PDB file.
 'AllegroGame.exe' (Win32): Loaded 'C:\Windows\SysWOW64\crypt32.dll'. Cannot find or open the PDB file.
-The thread 0x4c04 has exited with code 0 (0x0).
-The thread 0x4e84 has exited with code 0 (0x0).
-al-gfx INFO: Called set_gfx_mode(-1, 0, 0, 0, 0).
-al-gfx INFO: Closing graphics driver (10142B00) DirectDraw accel.
-'AllegroGame.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\ki120144.inf_amd64_5e535efebbe5fe10\igc32.dll'
-'AllegroGame.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\ki120144.inf_amd64_5e535efebbe5fe10\igdumdim32.dll'
-al-gfx INFO: Closing, restoring original console state.
-al-gfx INFO: Graphic mode closed.
-The thread 0x50c has exited with code 0 (0x0).
-The thread 0x4188 has exited with code 0 (0x0).
-The thread 0xa4c has exited with code 0 (0x0).
-The thread 0x1618 has exited with code 0 (0x0).
-The thread 0x4ae4 has exited with code 0 (0x0).
-The thread 0x3fd4 has exited with code 0 (0x0).
-The thread 0x2ad8 has exited with code 0 (0x0).
-The thread 0x4c40 has exited with code 0 (0x0).
-The program '[18284] AllegroGame.exe' has exited with code 0 (0x0).
+The thread 0x28ec has exited with code 0 (0x0).
+The thread 0x2684 has exited with code 0 (0x0).
+The thread 0xeb8 has exited with code 0 (0x0).
+The thread 0x4ea8 has exited with code 0 (0x0).
+The thread 0x23d0 has exited with code 0 (0x0).
+The thread 0x3f88 has exited with code 0 (0x0).
+The thread 0x2e34 has exited with code 0 (0x0).
+The program '[18064] AllegroGame.exe' has exited with code 0 (0x0).
