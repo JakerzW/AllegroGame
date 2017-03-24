@@ -6,10 +6,12 @@ void deinit();
 //int drawBackground();
 int destroyBitmaps();
 
-BITMAP *background = nullptr; 
+BITMAP *background = nullptr;
 BITMAP *archer = nullptr;
 BITMAP *arrow = nullptr;
 BITMAP *buffer = nullptr;
+
+bool arrowOnScreen = false;
 
 int main()
 {  /* start of main */
@@ -18,21 +20,49 @@ int main()
 	{
 		background = load_bitmap("sprites\\background.bmp", 0);
 		archer = load_bitmap("sprites\\archer.bmp", 0);
+		arrow = load_bitmap("sprites\\arrow.bmp", 0);
 		set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
 		buffer = create_bitmap(SCREEN_W, SCREEN_H);
 		clear_bitmap(buffer);
 		while (!key[KEY_ESC])
 		{
 			/*  main code  */
-			for (size_t i = 0; i < 5; i++)
+			for (size_t i = 0; i < 6; i++)
 			{
 				stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-				masked_blit(archer, buffer, i * 58, 0, 100, 540, 58, 80);
+				masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
+				masked_blit(arrow, buffer, 4 * 36, 0, (i+1)* 100, 540, 36, 39);
 				blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-				rest(80);
+				rest(100);
 			}
-			rest(2000);
+			rest(1000);
+			/*if (mouse_b & 1)
+			{
+				arrowOnScreen = true;
+				while (arrowOnScreen)
+				{
+					int distOfArrow = 0;
+					for (size_t i = 6; i < 8; i++)
+					{
+						distOfArrow += 100;
+						stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+						masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
+						masked_blit(arrow, buffer, 5 * 36, 0, distOfArrow, 530, 36, 39);
+					}
+					while (arrowOnScreen)
+					{
+						//add return to archer state
+						stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+						masked_blit(archer, buffer, 58, 0, 100, 530, 58, 80);
+						masked_blit(arrow, buffer, 5 * 36, 0, distOfArrow, 530, 36, 39);
+						distOfArrow += 100;
+						if (distOfArrow > 1500)
+							arrowOnScreen = false;
+					} 
+				}
+			}*/
 			show_mouse(screen);
+
 		}
 	}
 	else
@@ -45,8 +75,7 @@ int main()
 
 END_OF_MAIN()     /* line must be included at the end of the nor
 
-
-				  /* function definitions */
+/* function definitions */
 int init()
 {
 	int depth = 0;
@@ -85,7 +114,6 @@ int init()
 	destroyBitmaps();
 	return retvalue;
 }
-
 
 void deinit()
 {
