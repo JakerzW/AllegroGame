@@ -1,58 +1,53 @@
 #include <allegro.h>
 #include <cstdlib>
+#include <cmath>
 /* prototypes */
 int init();
 void deinit();
-//int drawBackground();
+
+int initBitmaps();
 int destroyBitmaps();
+int changeArcherState(int state, int arrowX, int arrowY, int arrowPos);
+//int fireArrow();
 
 BITMAP *background = nullptr;
 BITMAP *archer = nullptr;
 BITMAP *arrow = nullptr;
-BITMAP *buffer = nullptr;
-
-
+BITMAP *mainBuffer = nullptr;
+BITMAP *spriteBuffer = nullptr;
 
 int main()
 {  /* start of main */
 	int retval = 0;
 	if (init() == 0)
 	{
-		background = load_bitmap("sprites\\background.bmp", 0);
-		archer = load_bitmap("sprites\\archer.bmp", 0);
-		arrow = load_bitmap("sprites\\arrow.bmp", 0);
-		set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
-		buffer = create_bitmap(SCREEN_W, SCREEN_H);
-		clear_bitmap(buffer);
+		initBitmaps();
 		bool archerReady = false;
 		bool arrowOnScreen = false;
+		show_mouse(screen);
 		while (!key[KEY_ESC])
 		{
 			/*  main code  */
 			
 			if (!archerReady)
 			{
-				for (size_t i = 0; i < 6; i++)
-				{
-					stretch_blit(background, buffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-					masked_blit(archer, buffer, i * 58, 0, 100, 530, 58, 80);
-					//masked_blit(arrow, buffer, 4 * 36, 0, (i + 1) * 100, 540, 36, 39);
-					blit(buffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-					rest(100);
-				}
-				archerReady = true;
+				if (changeArcherState(0, 'null', 'null', 'null') == 1)
+					archerReady = true;
 			}
-			if (key[KEY_SPACE])
+			if (archerReady && (mouse_b & 1))
 			{
 				arrowOnScreen = true;
 				int arrowDist = 100;
 				while (arrowOnScreen)
 				{
-					masked_blit(arrow, buffer, 4 * 36, 0, arrowDist, 540, 36, 39);
+					masked_blit(arrow, screen, 36, 0, arrowDist, 540, 36, 39);
 					arrowDist += 100;
+					if (arrowDist > 1500)
+					{
+						arrowOnScreen = false;
+					}
 				}
 			}
-			show_mouse(screen);
 		}
 	}
 	else
@@ -101,7 +96,6 @@ int init()
 		retvalue = 0;
 	}
 	/* add other initializations here */
-	destroyBitmaps();
 	return retvalue;
 }
 
@@ -109,24 +103,94 @@ void deinit()
 {
 	clear_keybuf();
 	/* add other deinitializations here */
+	destroyBitmaps();
 }
 
-/*int drawBackground()
+int initBitmaps()
 {
 	background = load_bitmap("sprites\\background.bmp", 0);
-	if (!background)
-	{
-		allegro_message("Unable to find background image\n%s\n", allegro_error);
-		return -1;
-		destroy_bitmap(background);
-	}
-}*/
+	archer = load_bitmap("sprites\\archer.bmp", 0);
+	arrow = load_bitmap("sprites\\arrow.bmp", 0);
+	set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
+	mainBuffer = create_bitmap(SCREEN_W, SCREEN_H);
+	clear_bitmap(mainBuffer);
 
+	return 0;
+}
 int destroyBitmaps()
 {
 	destroy_bitmap(background);
 	destroy_bitmap(archer);
 	destroy_bitmap(arrow);
+
+	return 0;
+}
+
+int changeArcherState(int state, int arrowX, int arrowY, int arrowPos)
+{
+	int currentState = 'null';
+	currentState = state;
+	switch (currentState)
+	{
+		case 0:	//archer changing from not being able to shoot upon game opening to being able to shoot
+		{
+			for (size_t i = 0; i < 6; i++)
+			{
+				stretch_blit(background, mainBuffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+				masked_blit(archer, mainBuffer, i * 58, 0, 100, 530, 58, 80);
+				blit(mainBuffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+				clear_bitmap(mainBuffer);
+				rest(80);
+			}
+			return 1;
+		}
+		case 1:	//archer ready to shoot to shooting and returning to being ready to shoot
+		{
+			bool archerReady = false;
+			int archerPos = 6;
+			while (!archerReady)
+			{
+				++archerPos;
+				if (archerPos > 8)
+					archerPos = 0;
+				stretch_blit(background, mainBuffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
+				masked_blit(archer, mainBuffer, archerPos * 58, 0, 100, 530, 58, 80);
+				//insert arrow information (get arrow position and display the location it would be when the archer is moving (every 80 ticks)
+				//masked_blit(arrow, mainBuffer, arrowPos * 36, 0, arrowX, arrowY, 36, 39);
+				blit(mainBuffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+				rest(80);
+			}
+			return 2;
+		}
+	}
+}
+
+int fireArrow()
+{
+	/*process:
+			- x and y pos of mouse at time of click
+			- constant velocity value
+			- use x and y pos to work out angle using inverse tan
+			- using angle and constant velocity, find velocity of x and y direction
+			- using 1000 rests as a second and 40 pixels as a meter, find how many pixels per rests it should move
+			- use velocity of direction, divide by 100 to find distance travelled in 10 milseconds and then times by 40
+			  to find no. of pixels travelled in 10 milseconds
+			*/
+
+	int xPos, yPos;
+	int v = 65;
+	int pixToMoveX, pixToMoveY;
+	float vX, vY;
+	float rotation;
+
+	xPos = mouse_x; yPos = 720 - mouse_y;	//gets current mouse coords and puts into variables
+	rotation = atan(xPos / yPos);	//finds angle needed for rotation of sprite
+
+	vX = v * (cos(rotation));
+	vY = v * (sin(rotation));
+
+	pixToMoveX = (vX / 100) * 40;
+	pixToMoveY = (vY / 100) * 40;
 
 	return 0;
 }
