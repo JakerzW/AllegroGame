@@ -1,4 +1,2 @@
-﻿  Main.cpp
-c:\users\jaker\documents\github\allegrogame\main.cpp(163): warning C4715: 'changeArcherState': not all control paths return a value
-  AllegroGame.vcxproj -> C:\Users\Jaker\Documents\GitHub\AllegroGame\Debug\AllegroGame.exe
-  AllegroGame.vcxproj -> C:\Users\Jaker\Documents\GitHub\AllegroGame\Debug\AllegroGame.pdb (Partial PDB)
+﻿  AllegroGame.vcxproj -> D:\Documents\GitHub\AllegroGame\Debug\AllegroGame.exe
+  AllegroGame.vcxproj -> D:\Documents\GitHub\AllegroGame\Debug\AllegroGame.pdb (Partial PDB)

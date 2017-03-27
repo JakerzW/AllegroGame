@@ -1,20 +1,140 @@
 #include <allegro.h>
 #include <cstdlib>
 #include <cmath>
-/* prototypes */
+
+BITMAP *backgroundBmp = nullptr;
+BITMAP *archerBmp = nullptr;
+BITMAP *archerNoArmsBmp = nullptr;
+BITMAP *archerArmBmp = nullptr;
+BITMAP *arrowBmp = nullptr;
+BITMAP *chickenBmp = nullptr;
+BITMAP *eagleBmp = nullptr;
+BITMAP *seagullBmp = nullptr;
+BITMAP *bufferBmp = nullptr;
+
+int ticks;
+int bowAngle = 255;
+int score;
+int lives;
+const int maxBirds = 10;
+const int maxArrows = 3;
+double acc = 0.3;
+bool archerReady = true;
+
 int init();
 void deinit();
-
 int initBitmaps();
 int destroyBitmaps();
-int changeArcherState(int state, int arrowX, int arrowY, int arrowPos);
-//int fireArrow();
 
-BITMAP *background = nullptr;
-BITMAP *archer = nullptr;
-BITMAP *arrow = nullptr;
-BITMAP *mainBuffer = nullptr;
-BITMAP *spriteBuffer = nullptr;
+
+
+struct arrowState
+{
+	double x, y;
+	double vx, vy;
+	int px, py;
+	bool active;
+} arrow[2];
+
+/*struct fireState 
+{
+
+} fire[480];*/
+
+struct chickenState
+{
+	double x, y;
+	double vx, vy;
+	int curPos;
+	bool movingRight;
+	bool active;
+} chicken[maxBirds];
+
+struct eagleState
+{
+	double x, y;
+	double vx, vy;
+	int curPos;
+	bool movingRight;
+	bool active;
+} eagle[maxBirds];
+
+struct seagullState
+{
+	double x, y;
+	double vx, vy;
+	int curPos;
+	bool movingRight;
+	bool active;
+} seagull[maxBirds];
+
+int initBitmaps()
+{
+	backgroundBmp = load_bitmap("sprites\\background.bmp", 0);
+	archerBmp = load_bitmap("sprites\\archer.bmp", 0);
+	archerNoArmsBmp = load_bitmap("sprites\\archernoarms.bmp", 0);
+	archerArmBmp = load_bitmap("sprites\\archerarm.bmp", 0);
+	arrowBmp = load_bitmap("sprites\\arrow.bmp", 0);
+	chickenBmp = load_bitmap("sprites\\chicken.bmp", 0);
+	eagleBmp = load_bitmap("sprites\\eagle.bmp", 0);
+	seagullBmp = load_bitmap("sprites\\seagull.bmp", 0);
+	bufferBmp = create_bitmap(SCREEN_W, SCREEN_H);
+	clear_bitmap(bufferBmp);
+	set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
+	
+	return 0;
+}
+
+void drawChicken(int x, int y, int curPos, bool movingRight)
+{
+	if ((ticks % 100) == 0)
+	{
+		for (size_t i = 0; i < maxBirds; i++)
+		{
+			chicken[i].curPos++;
+			if (chicken[i].curPos > 2)
+				chicken[i].curPos = 0;
+		}
+		curPos++;
+		if (curPos > 2)
+			curPos = 0;
+	}
+	masked_blit(chickenBmp, bufferBmp, curPos * 32, movingRight * 19, x, y, 32, 19);
+}
+
+void drawEagle(int x, int y, int curPos, bool movingRight)
+{
+	if ((ticks % 100) == 0)
+	{
+		for (size_t i = 0; i < maxBirds; i++)
+		{
+			eagle[i].curPos++;
+			if (eagle[i].curPos > 2)
+				eagle[i].curPos = 0;
+		}
+		curPos++;
+		if (curPos > 2)
+			curPos = 0;
+	}
+	masked_blit(eagleBmp, bufferBmp, curPos * 32, movingRight * 31, x, y, 32, 31);
+}
+
+void drawSeagull(int x, int y, int curPos, bool movingRight)
+{
+	if ((ticks % 100) == 0)
+	{
+		for (size_t i = 0; i < maxBirds; i++)
+		{
+			seagull[i].curPos++;
+			if (seagull[i].curPos > 2)
+				seagull[i].curPos = 0;
+		}
+		curPos++;
+		if (curPos > 2)
+			curPos = 0;
+	}
+	masked_blit(seagullBmp, bufferBmp, curPos * 32, movingRight * 29, x, y, 31, 29);
+}
 
 int main()
 {  /* start of main */
@@ -22,32 +142,252 @@ int main()
 	if (init() == 0)
 	{
 		initBitmaps();
-		bool archerReady = false;
-		bool arrowOnScreen = false;
-		show_mouse(screen);
+		//show_mouse(screen);
+
 		while (!key[KEY_ESC])
 		{
-			/*  main code  */
+			//aim left
+			if (key[KEY_LEFT] || key[KEY_A])
+			{
+				bowAngle -= 1;
+				if (bowAngle < 195)
+					bowAngle = 195;
+				/*if(!turreton)
+            {
+                play_sample(turretsound,255,tankpan,1000,TRUE);
+                turreton = true;
+            }
+            adjust_sample(turretsound,255,tankpan,1000,TRUE);
 			
-			if (!archerReady)
-			{
-				if (changeArcherState(0, 'null', 'null', 'null') == 1)
-					archerReady = true;
+			add for bow sounds*/
 			}
-			if (archerReady && (mouse_b & 1))
+
+			//aim right
+			if (key[KEY_RIGHT] || key[KEY_D])
 			{
-				arrowOnScreen = true;
-				int arrowDist = 100;
-				while (arrowOnScreen)
+				bowAngle += 1;
+				if (bowAngle > 270)
+					bowAngle = 270;
+			}
+
+			//fire arrow with keyboard
+			if (key[KEY_SPACE] && archerReady == true)
+			{
+				archerReady = false;
+				for (size_t i = 0; i < maxArrows; i++)
 				{
-					masked_blit(arrow, screen, 36, 0, arrowDist, 540, 36, 39);
-					arrowDist += 100;
-					if (arrowDist > 1500)
+					if (arrow[i].active == 0)
 					{
-						arrowOnScreen = false;
+						//play arrow sound
+						arrow[i].active = 1;
+						arrow[i].x = 100 - ((270 - bowAngle) / 1.5);
+						arrow[i].y = 530 + ((bowAngle - 195) / 1.8);
+						arrow[i].vx = (bowAngle - 195) / 3;
+						arrow[i].vy = - (255 - bowAngle) / 1.5;
+						break;
 					}
 				}
 			}
+
+			//fire release
+			if ((!key[KEY_SPACE] || mouse_b&1) && archerReady == false)
+				archerReady = true;
+
+			//delete birds that aren't on screen 
+			for (size_t i = 0; i < maxBirds; i++)
+			{
+				if (((chicken[i].movingRight == 0) && (chicken[i].x < 0)) || ((chicken[i].movingRight == 1) && (chicken[i].x > 1280)))
+					chicken[i].active = 0;
+				
+				if (((eagle[i].movingRight == 0) && (eagle[i].x < 0)) || ((eagle[i].movingRight == 1) && (eagle[i].x > 1280)))
+					eagle[i].active = 0;
+
+				if (((seagull[i].movingRight == 0) && (seagull[i].x < 0)) || ((seagull[i].movingRight == 1) && (seagull[i].x > 1280)))
+					seagull[i].active = 0;
+			}
+
+			//add chicken
+			if (rand() % 1000 > 992)
+			{
+				for (size_t i = 0; i < maxBirds; i++)
+				{
+					if (chicken[i].active == 0)
+					{
+						chicken[i].active = 1;
+						if (((rand() % 100) % 2) == 0)
+						{
+							chicken[i].movingRight = true;
+							chicken[i].x = 0;
+							chicken[i].vx = (rand() % 5 + 5) / 5;
+						}
+						else
+						{
+							chicken[i].movingRight = false;
+							chicken[i].x = 1280;
+							chicken[i].vx = - ((rand() % 5 + 5) / 5);
+						}
+						chicken[i].y = (rand() % 100 + 600);
+						chicken[i].vy = 0;
+						break;
+					}
+				}
+			}
+
+			//add seagull
+			if (rand() % 1000 > 990)
+			{
+				for (size_t i = 0; i < maxBirds; i++)
+				{
+					if (seagull[i].active == 0)
+					{
+						seagull[i].active = 1;
+						if (((rand() % 100) % 2) == 0)
+						{
+							seagull[i].movingRight = true;
+							seagull[i].x = 0;
+							seagull[i].vx = (rand() % 5 + 8) / 5;
+						}
+						else
+						{
+							seagull[i].movingRight = false;
+							seagull[i].x = 1280;
+							seagull[i].vx = -((rand() % 5 + 8) / 5);
+						}
+						seagull[i].y = rand() % SCREEN_H / 2 + 25;
+						seagull[i].vy = 0;
+						break;
+					}
+				}
+			}
+
+			//add eagle
+			if (rand() % 1000 > 998)
+			{
+				for (size_t i = 0; i < maxBirds; i++)
+				{
+					if (eagle[i].active == 0)
+					{
+						eagle[i].active = 1;
+
+						if (((rand() % 100) % 2) == 0)
+						{
+							eagle[i].movingRight = true;
+							eagle[i].x = 0;
+							eagle[i].vx = (rand() % 5 + 8) / 5;
+						}
+						else
+						{
+							eagle[i].movingRight = false;
+							eagle[i].x = 1280;
+							eagle[i].vx = -((rand() % 5 + 8) / 5);
+						}
+						eagle[i].y = rand() % SCREEN_H / 2 + 25;
+						eagle[i].vy = 0;
+						break;
+					}
+				}
+			}
+
+			stretch_blit(backgroundBmp, bufferBmp, 0, 0, backgroundBmp->w, backgroundBmp->h, 0, 0, SCREEN_W, SCREEN_H);
+			//insert if to check if archer is ready? if not ready increment archer animation?
+			masked_blit(archerNoArmsBmp, bufferBmp, 0, 0, 100, 530, 58, 80);
+			rotate_sprite(bufferBmp, archerArmBmp, 80, 540, itofix(bowAngle));
+
+			//draw arrow position
+			for (size_t i = 0; i < maxArrows; i++)
+			{
+				if (arrow[i].active == 1)
+				{
+					arrow[i].px = arrow[i].x;
+					arrow[i].py = arrow[i].y;
+					arrow[i].x = arrow[i].x + arrow[i].vx;
+					arrow[i].y = arrow[i].y + arrow[i].vy;
+					arrow[i].vy = arrow[i].vy + acc;
+					rotate_sprite(bufferBmp, arrowBmp, arrow[i].x, arrow[i].y, itofix(bowAngle - 192));
+					if ((arrow[i].px > SCREEN_W) || (arrow[i].py > SCREEN_H))
+						arrow[i].active = 0;
+					if ((arrow[i].active == 1) && (arrow[i].py > SCREEN_H))
+					{
+						arrow[i].active = 0;
+						//insert dead arrow graphic
+					}
+				}
+			}
+
+			//check chicken collisions
+			for (size_t i = 0; i < maxBirds; i++)
+			{
+				for (size_t o = 0; o < maxArrows; o++)
+				{
+					if ((chicken[i].active == 1) && (arrow[o].active == 1))
+						if ((abs(chicken[i].x - arrow[o].x) < 10) && (abs(chicken[i].y - arrow[o].y) < 10))
+						{
+							chicken[i].active = 0;
+							arrow[o].active = 0;
+							//insert dead bird img
+							score += 1;
+						}
+				}	
+			}
+
+			//check seagull collisions
+			for (size_t i = 0; i < maxBirds; i++)
+			{
+				for (size_t o = 0; o < maxArrows; o++)
+				{
+					if ((seagull[i].active == 1) && (arrow[o].active == 1))
+						if ((abs(seagull[i].x - arrow[o].x) < 10) && (abs(seagull[i].y - arrow[o].y) < 10))
+						{
+							seagull[i].active = 0;
+							arrow[o].active = 0;
+							//insert dead bird img
+							score += 3;
+						}
+				}
+			}
+
+			//check for eagle collisions
+			for (size_t i = 0; i < maxBirds; i++)
+			{
+				for (size_t o = 0; o < maxArrows; o++)
+				{
+					if ((eagle[i].active == 1) && (arrow[o].active == 1))
+						if ((abs(eagle[i].x - arrow[o].x) < 10) && (abs(eagle[i].y - arrow[o].y) < 10))
+						{
+							eagle[i].active = 0;
+							arrow[o].active = 0;
+							//insert dead bird img
+							score += 10;
+						}
+				}
+			}
+			
+			//move and draw birds
+			for (size_t i = 0; i < maxBirds; i++)
+			{
+				if (chicken[i].active == 1)
+				{
+					drawChicken(chicken[i].x, chicken[i].y, chicken[i].curPos, chicken[i].movingRight);
+					chicken[i].x += chicken[i].vx;
+					chicken[i].y += chicken[i].vy;
+				}
+				if (eagle[i].active == 1)
+				{
+					drawEagle(eagle[i].x, eagle[i].y, eagle[i].curPos, eagle[i].movingRight);
+					eagle[i].x += eagle[i].vx;
+					eagle[i].y += eagle[i].vy;
+				}
+				if (seagull[i].active == 1)
+				{
+					drawSeagull(seagull[i].x, seagull[i].y, seagull[i].curPos, seagull[i].movingRight);
+					seagull[i].x += seagull[i].vx;
+					seagull[i].y += seagull[i].vy;
+				}
+			}
+
+			blit(bufferBmp, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
+			rest(20);
+			ticks += 20;
 		}
 	}
 	else
@@ -106,91 +446,13 @@ void deinit()
 	destroyBitmaps();
 }
 
-int initBitmaps()
-{
-	background = load_bitmap("sprites\\background.bmp", 0);
-	archer = load_bitmap("sprites\\archer.bmp", 0);
-	arrow = load_bitmap("sprites\\arrow.bmp", 0);
-	set_mouse_sprite(load_bitmap("sprites\\crosshair.bmp", 0));
-	mainBuffer = create_bitmap(SCREEN_W, SCREEN_H);
-	clear_bitmap(mainBuffer);
 
-	return 0;
-}
+
 int destroyBitmaps()
 {
-	destroy_bitmap(background);
-	destroy_bitmap(archer);
-	destroy_bitmap(arrow);
-
-	return 0;
-}
-
-int changeArcherState(int state, int arrowX, int arrowY, int arrowPos)
-{
-	int currentState = 'null';
-	currentState = state;
-	switch (currentState)
-	{
-		case 0:	//archer changing from not being able to shoot upon game opening to being able to shoot
-		{
-			for (size_t i = 0; i < 6; i++)
-			{
-				stretch_blit(background, mainBuffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-				masked_blit(archer, mainBuffer, i * 58, 0, 100, 530, 58, 80);
-				blit(mainBuffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-				clear_bitmap(mainBuffer);
-				rest(80);
-			}
-			return 1;
-		}
-		case 1:	//archer ready to shoot to shooting and returning to being ready to shoot
-		{
-			bool archerReady = false;
-			int archerPos = 6;
-			while (!archerReady)
-			{
-				++archerPos;
-				if (archerPos > 8)
-					archerPos = 0;
-				stretch_blit(background, mainBuffer, 0, 0, background->w, background->h, 0, 0, SCREEN_W, SCREEN_H);
-				masked_blit(archer, mainBuffer, archerPos * 58, 0, 100, 530, 58, 80);
-				//insert arrow information (get arrow position and display the location it would be when the archer is moving (every 80 ticks)
-				//masked_blit(arrow, mainBuffer, arrowPos * 36, 0, arrowX, arrowY, 36, 39);
-				blit(mainBuffer, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
-				rest(80);
-			}
-			return 2;
-		}
-	}
-}
-
-int fireArrow()
-{
-	/*process:
-			- x and y pos of mouse at time of click
-			- constant velocity value
-			- use x and y pos to work out angle using inverse tan
-			- using angle and constant velocity, find velocity of x and y direction
-			- using 1000 rests as a second and 40 pixels as a meter, find how many pixels per rests it should move
-			- use velocity of direction, divide by 100 to find distance travelled in 10 milseconds and then times by 40
-			  to find no. of pixels travelled in 10 milseconds
-			*/
-
-	int xPos, yPos;
-	int v = 65;
-	int pixToMoveX, pixToMoveY;
-	float vX, vY;
-	float rotation;
-
-	xPos = mouse_x; yPos = 720 - mouse_y;	//gets current mouse coords and puts into variables
-	rotation = atan(xPos / yPos);	//finds angle needed for rotation of sprite
-
-	vX = v * (cos(rotation));
-	vY = v * (sin(rotation));
-
-	pixToMoveX = (vX / 100) * 40;
-	pixToMoveY = (vY / 100) * 40;
+	destroy_bitmap(backgroundBmp);
+	destroy_bitmap(archerBmp);
+	destroy_bitmap(arrowBmp);
 
 	return 0;
 }
